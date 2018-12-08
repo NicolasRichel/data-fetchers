@@ -26,7 +26,7 @@
       <h2>Block Data Fetcher</h2>
       <block-data-fetcher
         url="http://localhost:8081/data/0">
-        Load Data
+        Fetch Data
       </block-data-fetcher>
       <div id="res-block" class="result"></div>
       <script>
@@ -41,10 +41,15 @@
       <h2>Chunked Data Fetcher</h2>
       <chunked-data-fetcher
         url="ws://localhost:8081/websocket/data">
-        Load Data
+        Fetch Data
       </chunked-data-fetcher>
       <div id="res-chunked" class="result"></div>
-      <script></script>
+      <script>
+        document.querySelector('chunked-data-fetcher')
+          .addEventListener('data-loaded', (e) => {
+            document.getElementById('res-block').innerHTML += `<div>${e.detail.data}</div>`;
+          });
+      </script>
     </div>
   </body>
 </html>
