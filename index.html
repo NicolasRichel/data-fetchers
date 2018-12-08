@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link rel="icon" href="./web-components-logo.png"/>
+    <title>Data Fetchers Elements</title>
+    <script defer type="module" src="./custom-elements.js"></script>
+    <style>
+      .demo-container {
+        width: 80%;
+        margin: auto;
+        padding: 32px;
+      }
+      .result {
+        width: 50%;
+        margin: 36px;
+        padding: 12px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Data Fetchers Elements</h1>
+    <hr/>
+    <div class="demo-container">
+      <h2>Block Data Fetcher</h2>
+      <block-data-fetcher
+        url="http://localhost:8081/data/0">
+        Load Data
+      </block-data-fetcher>
+      <div id="res-block" class="result"></div>
+      <script>
+        document.querySelector('block-data-fetcher')
+          .addEventListener('data-loaded', (e) => {
+            document.getElementById('res-block').textContent = e.detail.data;
+          });
+      </script>
+    </div>
+    <hr/>
+    <div class="demo-container">
+      <h2>Chunked Data Fetcher</h2>
+      <chunked-data-fetcher
+        url="ws://localhost:8081/websocket/data">
+        Load Data
+      </chunked-data-fetcher>
+      <div id="res-chunked" class="result"></div>
+      <script></script>
+    </div>
+  </body>
+</html>
