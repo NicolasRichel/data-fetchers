@@ -1,4 +1,4 @@
-# Smart Page Load Elements
+# Data Fetcher Elements
 
 This repository provide a set of custom HTML elements that are intended
 to be used when it is necessary to load a large amount of data provided
