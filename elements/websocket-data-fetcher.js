@@ -1,5 +1,5 @@
 /**
- * Chunked Data Fetcher Element
+ * Websocket Data Fetcher Element
  * 
  * Specific Attributes :
  * 
@@ -10,23 +10,26 @@
  *       URL of the data endpoint.
  */
 
-export default class ChunkedDataFetcher extends HTMLElement {
+export default class WebsocketDataFetcher extends HTMLElement {
 
   constructor() {
     super();
     this.success = false;
     this.status = null;
     this.buffer = [];
+    this._createShadowDOM();
     this.addEventListener('click', this.fetchData);
-    // Create Shadow DOM
+  }
+
+  _createShadowDOM() {
     const btn = document.createElement('button');
     btn.textContent = this.textContent;
-    this.attachShadow({mode: 'open'}).appendChild(btn);
+    this.attachShadow({ mode: 'open' }).appendChild(btn);
   }
 
   connectedCallback() {
     if (!this.hasAttribute('url') || this.getAttribute('url')==='') {
-      console.warn('Chunked Data Fetcher must have an \'url\' attribute.');
+      console.warn('Websocket Data Fetcher must have an \'url\' attribute.');
       this.disabled = true;
     } else if (this.hasAttribute('auto')) {
       this.disabled = true;
@@ -35,7 +38,9 @@ export default class ChunkedDataFetcher extends HTMLElement {
     }
   }
 
-  flushBuffer() { this.buffer = []; }
+  flushBuffer() {
+    this.buffer = [];
+  }
 
   fetchData() {
     const socket = new WebSocket(this.getAttribute('url'));
@@ -53,14 +58,9 @@ export default class ChunkedDataFetcher extends HTMLElement {
 
   notify(data) {
     this.dispatchEvent(
-      new CustomEvent('data-loaded', {
-        detail: {
-          data: data
-        }
-      })
+      new CustomEvent('data-loaded', { data })
     );
   }
-
 
 
   // Reflect 'disabled' property to attribute
@@ -80,4 +80,4 @@ export default class ChunkedDataFetcher extends HTMLElement {
 
 }
 
-window.customElements.define('chunked-data-fetcher', ChunkedDataFetcher);
+window.customElements.define('websocket-data-fetcher', WebsocketDataFetcher);

@@ -1,0 +1,12 @@
+.demo-container {
+  width: 80%;
+  margin: auto;
+  padding: 32px;
+}
+
+.result {
+  width: 50%;
+  margin: 36px;
+  padding: 12px;
+  border: 1px solid black;
+}

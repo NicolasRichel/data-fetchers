@@ -1,3 +1,4 @@
 // Import all custom elements :
-import BlockDataFetcher from './elements/block-data-fetcher.js';
-import ChunkedDataFetcher from './elements/chunked-data-fetcher.js';
+import EventDataFetcher from './elements/event-data-fetcher.js';
+import HttpDataFetcher from './elements/http-data-fetcher.js';
+import WebsocketDataFetcher from './elements/websocket-data-fetcher.js';

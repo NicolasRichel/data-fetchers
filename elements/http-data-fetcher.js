@@ -1,9 +1,8 @@
 /**
- * Block Data Fetcher Element
+ * HTTP Data Fetcher Element
  * 
- * This element is a data fetcher that can be triggered automatically
- * or manually. It fetches data in one single block and dispatch an
- * event when it is done.
+ * This element is a data fetcher that can be triggered automatically or manually.
+ * It fetches data in one single block (via HTTP request) and dispatch an event when it is done.
  * 
  * Specific Attributes :
  * 
@@ -19,23 +18,26 @@
  *       URL of the data endpoint.
  */
 
-export default class BlockDataFetcher extends HTMLElement {
+export default class HttpDataFetcher extends HTMLElement {
 
   constructor() {
     super();
     this.success = false;
     this.status = null;
     this.buffer = [];
+    this._createShadowDOM();
     this.addEventListener('click', this.fetchData);
-    // Create Shadow DOM
+  }
+
+  _createShadowDOM() {
     const btn = document.createElement('button');
     btn.textContent = this.textContent;
-    this.attachShadow({mode: 'open'}).appendChild(btn);
+    this.attachShadow({ mode: 'open' }).appendChild(btn);
   }
 
   connectedCallback() {
     if (!this.hasAttribute('url') || this.getAttribute('url')==='') {
-      console.warn('Block Data Fetcher must have an \'url\' attribute.');
+      console.warn('HTTP Data Fetcher must have an \'url\' attribute.');
       this.disabled = true;
     } else if (this.hasAttribute('auto')) {
       this.disabled = true;
@@ -44,30 +46,30 @@ export default class BlockDataFetcher extends HTMLElement {
     }
   }
 
-  flushBuffer() { this.buffer = []; }
+  flushBuffer() {
+    this.buffer = [];
+  }
 
-  fetchData() {
-    fetch(this.getAttribute('url'), {
-      method: 'GET'
-    })
-    .then((res) => {
+  async fetchData() {
+    try {
+      const res = await fetch(this.getAttribute('url'), { method: 'GET' });
       // Set 'success' flag and response status
       this.success = res.ok;
       this.status = res.status;
-      // Then return response body
-      return res.text();
-    })
-    .then((body) => {
-      // Parse data according to 'data-type'
-      const data = this.getAttribute('data-type')==='json' ? JSON.parse(body) : body;
-      // Store response data in buffer
-      this.buffer.push( data );
-      // Notify that data are loaded
-      this.notify( data );
-    })
-    .catch((err) => {
+      if (this.success) {
+        // Parse data according to 'data-type'
+        const body = await res.text();
+        const data = this.getAttribute('data-type')==='json' ? JSON.parse(body) : body;
+        // Store response data in buffer
+        this.buffer.push( data );
+        // Notify that data are loaded
+        this.notify( data );
+      } else {
+        throw new Error(`Fetch error: Status: ${this.status}`);
+      }
+    } catch (err) {
       console.error(err);
-    });
+    }
   }
 
   notify(data) {
@@ -75,13 +77,10 @@ export default class BlockDataFetcher extends HTMLElement {
       new CustomEvent('data-loaded', {
         bubbles: true,
         composed: true,
-        detail: {
-          data: data
-        }
+        data
       })
     );
   }
-
 
 
   // Reflect 'disabled' property to attribute
@@ -101,4 +100,4 @@ export default class BlockDataFetcher extends HTMLElement {
 
 }
 
-window.customElements.define('block-data-fetcher', BlockDataFetcher);
+window.customElements.define('http-data-fetcher', HttpDataFetcher);
